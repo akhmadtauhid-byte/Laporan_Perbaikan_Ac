@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coolmax AC Service — Laporan Perbaikan</title>
+<style>
+:root{--pri:#0e7490;--pri-d:#155e75;--bg:#f1f5f9;--card:#fff;--tx:#0f172a;--mut:#64748b;--bd:#e2e8f0;--ok:#16a34a;--warn:#d97706;--bad:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:15px}
+header{background:var(--pri);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+header h1{font-size:17px;margin:0}header small{opacity:.85;display:block;font-size:12px}
+header button{background:rgba(255,255,255,.18);color:#fff;border:0;padding:6px 10px;border-radius:8px;cursor:pointer;margin-left:6px}
+nav{display:flex;gap:4px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--bd);padding:0 8px;position:sticky;top:52px;z-index:19}
+nav button{border:0;background:none;padding:12px 14px;font-size:14px;cursor:pointer;color:var(--mut);white-space:nowrap;border-bottom:3px solid transparent}
+nav button.on{color:var(--pri);border-bottom-color:var(--pri);font-weight:600}
+main{max-width:980px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{font-size:16px;margin:0 0 10px;color:var(--pri-d)}
+label{display:block;font-size:13px;color:var(--mut);margin:8px 0 3px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px;background:#fff;font-family:inherit}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:640px){.row,.row3{grid-template-columns:1fr}}
+.btn{background:var(--pri);color:#fff;border:0;padding:11px 16px;border-radius:9px;font-size:15px;cursor:pointer;font-weight:600}
+.btn:disabled{opacity:.55;cursor:wait}.btn.sec{background:#e2e8f0;color:var(--tx)}.btn.bad{background:var(--bad)}.btn.sm{padding:6px 10px;font-size:13px}
+.btn.wa{background:#16a34a}
+.hide{display:none!important}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:8px}
+.ph{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#e2e8f0}
+.ph img{width:100%;height:100%;object-fit:cover;cursor:pointer}
+.ph b{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border-radius:50%;width:22px;height:22px;text-align:center;line-height:22px;cursor:pointer;font-weight:400}
+.addph{display:flex;align-items:center;justify-content:center;flex-direction:column;border:2px dashed #94a3b8;color:var(--mut);cursor:pointer;font-size:12px;aspect-ratio:1;border-radius:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600}
+.t-Selesai{background:#dcfce7;color:#166534}.t-Proses{background:#fef3c7;color:#92400e}.t-Lanjut{background:#fee2e2;color:#991b1b}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:12px}.stat span{font-size:12px;color:var(--mut)}.stat b{display:block;font-size:20px;margin-top:3px}
+.item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.item:last-child{border:0}.item small{color:var(--mut);display:block}
+.parts .prow{display:grid;grid-template-columns:2fr 70px 1fr 34px;gap:6px;margin-bottom:6px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:14px}
+.modal .box{background:#fff;border-radius:14px;padding:16px;max-width:760px;width:100%}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;display:flex;align-items:center;justify-content:center}
+.lb img{max-width:96vw;max-height:92vh}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:11px 18px;border-radius:10px;z-index:80;max-width:90vw}
+.toast.err{background:var(--bad)}
+.login{max-width:360px;margin:12vh auto;padding:0 14px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:4px 10px;font-size:14px}.kv dt{color:var(--mut)}.kv dd{margin:0}
+.gal h4{margin:12px 0 4px;font-size:13px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:8px;border-bottom:1px solid var(--bd);text-align:left}
+#printArea{display:none}
+@media print{body>*:not(#printArea){display:none!important}#printArea{display:block!important;padding:0}#printArea img{max-width:32%;margin:2px;border:1px solid #999}#printArea h2,#printArea h3{margin:8px 0 4px}}
+</style>
+</head>
+<body>
+
+<div id="cfgWarn" class="card hide" style="margin:14px;background:#fef3c7">⚠ API_URL belum diisi. Ganti nilai <code>API_URL</code> di bagian &lt;script&gt; dengan URL Web App (…/exec).</div>
+
+<!-- LOGIN -->
+<section id="viewLogin" class="login">
+  <div class="card">
+    <h2 style="font-size:20px">❄ Coolmax AC Service</h2>
+    <p style="color:var(--mut);margin-top:0">Sistem pelaporan perbaikan AC</p>
+    <label>Nama teknisi / admin</label><input id="lgNama" autocomplete="username">
+    <label>PIN</label><input id="lgPin" type="password" inputmode="numeric" autocomplete="current-password">
+    <div style="margin-top:14px"><button class="btn" style="width:100%" id="lgBtn">Masuk</button></div>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="viewApp" class="hide">
+<header><div><h1>❄ Coolmax AC Service</h1><small id="hdUser"></small></div><div><button id="btnPin">Ganti PIN</button><button id="btnOut">Keluar</button></div></header>
+<nav id="nav">
+  <button data-t="lapor" class="on">＋ Lapor Baru</button>
+  <button data-t="riwayat">Riwayat</button>
+  <button data-t="jadwal">Jadwal Servis</button>
+  <button data-t="pelanggan">Pelanggan &amp; Unit</button>
+  <button data-t="teknisi" class="hide" id="navTek">Teknisi</button>
+</nav>
+<main>
+
+<!-- LAPOR BARU -->
+<section id="t-lapor">
+ <form id="frm" autocomplete="off">
+  <div class="card"><h2>1. Pelanggan</h2>
+    <div class="row"><div><label>Nama pelanggan *</label><input id="fNama" list="dlCust" required></div>
+    <div><label>No. HP / WhatsApp</label><input id="fHp" inputmode="tel"></div></div>
+    <label>Alamat</label><input id="fAlamat">
+    <datalist id="dlCust"></datalist>
+    <div id="custInfo" style="font-size:13px;color:var(--ok);margin-top:4px"></div>
+  </div>
+
+  <div class="card"><h2>2. Unit AC</h2>
+    <label>Pilih unit</label><select id="fUnit"></select>
+    <div id="newUnit" class="hide">
+      <div class="row3"><div><label>Merek / Tipe</label><input id="uMerek" placeholder="Daikin FTV"></div>
+      <div><label>PK</label><input id="uPk" placeholder="1"></div>
+      <div><label>Lokasi / Ruangan</label><input id="uLok" placeholder="Kamar utama"></div></div>
+      <label>Jenis freon</label><input id="uFreon" placeholder="R32 / R410A / R22">
+    </div>
+  </div>
+
+  <div class="card"><h2>3. Pekerjaan</h2>
+    <div class="row"><div><label>Tanggal</label><input type="date" id="fTgl"></div>
+    <div><label>Jenis pekerjaan *</label><select id="fJenis" required>
+      <option>Servis Rutin / Cuci</option><option>Isi Freon</option><option>Perbaikan</option><option>Pasang Baru</option><option>Bongkar Pasang</option><option>Lainnya</option></select></div></div>
+    <label>Keluhan pelanggan</label><textarea id="fKeluhan" placeholder="Contoh: tidak dingin, bocor air, bunyi berisik"></textarea>
+    <label>Tindakan / hasil pekerjaan</label><textarea id="fTindakan" placeholder="Contoh: cuci indoor-outdoor, ganti kapasitor, tambah freon 20 psi"></textarea>
+    <div class="row"><div><label>Status</label><select id="fStatus"><option>Selesai</option><option>Dalam Proses</option><option>Perlu Tindak Lanjut</option></select></div>
+    <div><label>Jadwal servis berikutnya</label><input type="date" id="fNext"></div></div>
+  </div>
+
+  <div class="card"><h2>4. Bukti Foto</h2>
+    <p style="margin:0;font-size:13px;color:var(--mut)">Foto otomatis diberi cap tanggal-jam, nama pelanggan &amp; label, lalu dikompres.</p>
+    <label>Sebelum pekerjaan *</label><div class="photos" id="ph-sebelum"></div>
+    <label>Proses pekerjaan</label><div class="photos" id="ph-proses"></div>
+    <label>Sesudah pekerjaan *</label><div class="photos" id="ph-sesudah"></div>
+    <input type="file" id="fileIn" accept="image/*" multiple class="hide">
+  </div>
+
+  <div class="card"><h2>5. Biaya &amp; Sparepart</h2>
+    <div class="parts" id="parts"></div>
+    <button type="button" class="btn sec sm" id="addPart">＋ Tambah sparepart / material</button>
+    <div class="row" style="margin-top:8px"><div><label>Biaya jasa (Rp)</label><input id="fJasa" inputmode="numeric" value="0"></div>
+    <div><label>Total</label><input id="fTotal" readonly></div></div>
+    <label>Catatan tambahan</label><textarea id="fCatatan"></textarea>
+  </div>
+  <button class="btn" id="btnSave" style="width:100%;padding:14px">Kirim Laporan</button>
+ </form>
+</section>
+
+<!-- RIWAYAT -->
+<section id="t-riwayat" class="hide">
+  <div class="stats" id="stats"></div>
+  <div class="card">
+    <div class="row3"><input id="qSearch" placeholder="Cari pelanggan / ID / unit…"><input type="month" id="qMonth"><select id="qStatus"><option value="">Semua status</option><option>Selesai</option><option>Dalam Proses</option><option>Perlu Tindak Lanjut</option></select></div>
+    <div id="qTekWrap" class="hide" style="margin-top:8px"><select id="qTek"></select></div>
+    <div style="margin-top:6px" id="list"></div>
+  </div>
+</section>
+
+<!-- JADWAL -->
+<section id="t-jadwal" class="hide"><div class="card"><h2>Jadwal servis berikutnya</h2><div id="jadwalList"></div></div></section>
+
+<!-- PELANGGAN -->
+<section id="t-pelanggan" class="hide"><div class="card"><input id="cSearch" placeholder="Cari pelanggan…"><div id="custList" style="margin-top:8px"></div></div></section>
+
+<!-- TEKNISI -->
+<section id="t-teknisi" class="hide">
+  <div class="card"><h2>Tambah / ubah teknisi</h2>
+    <div class="row3"><div><label>Nama</label><input id="tNama"></div><div><label>PIN (kosong = tidak diubah)</label><input id="tPin" inputmode="numeric"></div>
+    <div><label>Role</label><select id="tRole"><option value="teknisi">teknisi</option><option value="admin">admin</option></select></div></div>
+    <div style="margin-top:10px"><button class="btn" id="tSave">Simpan</button></div></div>
+  <div class="card"><h2>Daftar akun</h2><table id="tTable"></table></div>
+</section>
+</main>
+</div>
+
+<div id="modal" class="modal hide"><div class="box" id="modalBox"></div></div>
+<div id="lb" class="lb hide"><img id="lbImg" alt=""></div>
+<div id="printArea"></div>
+
+<script>
+/* ====== KONFIGURASI ====== */
+const API_URL = 'API_URL';   // <-- ganti dengan URL Web App (…/exec)
+const MAX_PX = 1280, QUALITY = 0.72;
+
+/* ====== STATE ====== */
+const S = {auth:null, user:null, customers:[], units:[], reports:[], teknisi:[], photos:{sebelum:[],proses:[],sesudah:[]}, parts:[], target:null};
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp = n => 'Rp ' + (Number(n)||0).toLocaleString('id-ID');
+const today = () => { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const thumb = (id,w=400) => `https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
+const tagCls = s => s==='Selesai'?'t-Selesai':s==='Dalam Proses'?'t-Proses':'t-Lanjut';
+const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}, del(k){try{localStorage.removeItem(k)}catch(e){}} };
+
+function toast(msg, err){ const t=document.createElement('div'); t.className='toast'+(err?' err':''); t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), err?5000:2500); }
+
+async function api(action, payload, auth){
+  if(API_URL==='API_URL'){ $('cfgWarn').classList.remove('hide'); throw new Error('API_URL belum diisi'); }
+  const res = await fetch(API_URL, {method:'POST', body: JSON.stringify({action, payload, auth: auth||S.auth})});
+  const j = await res.json();
+  if(!j.ok) throw new Error(j.error||'Terjadi kesalahan');
+  return j;
+}
+
+/* ====== LOGIN ====== */
+async function doLogin(nama, pin, silent){
+  try{
+    const j = await api('login', null, {nama, pin});
+    S.auth = {nama, pin}; S.user = j.user;
+    store.set('cmx_auth', JSON.stringify(S.auth));
+    $('viewLogin').classList.add('hide'); $('viewApp').classList.remove('hide');
+    $('hdUser').textContent = j.user.nama + ' · ' + j.user.role;
+    $('navTek').classList.toggle('hide', j.user.role!=='admin');
+    await refresh();
+  }catch(e){ if(!silent) toast(e.message,true); }
+}
+$('lgBtn').onclick = async ()=>{ $('lgBtn').disabled=true; await doLogin($('lgNama').value.trim(), $('lgPin').value.trim()); $('lgBtn').disabled=false; };
+$('lgPin').addEventListener('keydown', e=>{ if(e.key==='Enter') $('lgBtn').click(); });
+$('btnOut').onclick = ()=>{ store.del('cmx_auth'); location.reload(); };
+$('btnPin').onclick = async ()=>{
+  const pin = prompt('Masukkan PIN baru (min. 4 digit):'); if(!pin) return;
+  try{ await api('changePin',{pin}); S.auth.pin=pin; store.set('cmx_auth',JSON.stringify(S.auth)); toast('PIN diganti'); }catch(e){ toast(e.message,true); }
+};
+
+async function refresh(){
+  const j = await api('bootstrap');
+  S.customers=j.customers; S.units=j.units; S.reports=j.reports; S.teknisi=j.teknisi||[];
+  renderCustList(); renderUnits(); renderRiwayat(); renderJadwal(); renderCust(); renderTeknisi();
+}
+
+/* ====== NAV ====== */
+$('nav').onclick = e=>{ const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));
+  ['lapor','riwayat','jadwal','pelanggan','teknisi'].forEach(t=>$('t-'+t).classList.toggle('hide', t!==b.dataset.t)); };
+
+/* ====== FORM: PELANGGAN & UNIT ====== */
+function renderCustList(){ $('dlCust').innerHTML = S.customers.map(c=>`<option value="${esc(c.Nama)}">${esc(c.HP)}</option>`).join(''); }
+function curCust(){ const n=$('fNama').value.trim().toLowerCase(); return S.customers.find(c=>c.Nama.toLowerCase()===n) || null; }
+function renderUnits(){
+  const c = curCust();
+  const us = c ? S.units.filter(u=>u.PelangganID===c.ID) : [];
+  $('fUnit').innerHTML = us.map(u=>`<option value="${u.ID}">${esc(u.Merek)} ${esc(u.PK)}PK – ${esc(u.Lokasi)}</option>`).join('') + '<option value="">＋ Unit baru…</option>';
+  toggleNewUnit();
+}
+function toggleNewUnit(){ $('newUnit').classList.toggle('hide', $('fUnit').value!==''); }
+$('fNama').addEventListener('input', ()=>{
+  const c=curCust();
+  if(c){ $('fHp').value=c.HP; $('fAlamat').value=c.Alamat; $('custInfo').textContent='✔ Pelanggan terdaftar ('+c.ID+')'; } else $('custInfo').textContent='';
+  renderUnits();
+});
+$('fUnit').onchange = toggleNewUnit;
+
+/* ====== FOTO ====== */
+let photoKind=null;
+function drawPhotos(){
+  ['sebelum','proses','sesudah'].forEach(k=>{
+    $('ph-'+k).innerHTML = S.photos[k].map((p,i)=>`<div class="ph"><img src="${p.data}" data-k="${k}" data-i="${i}"><b data-k="${k}" data-i="${i}">×</b></div>`).join('')
+      + `<div class="addph" data-add="${k}"><span style="font-size:26px">📷</span>Tambah</div>`;
+  });
+}
+document.addEventListener('click', e=>{
+  const add=e.target.closest('[data-add]'); if(add){ photoKind=add.dataset.add; $('fileIn').click(); return; }
+  const del=e.target.closest('.ph b'); if(del){ S.photos[del.dataset.k].splice(+del.dataset.i,1); drawPhotos(); return; }
+  const img=e.target.closest('.ph img'); if(img){ openLb(img.src); }
+});
+$('fileIn').onchange = async e=>{
+  const files=[...e.target.files]; e.target.value='';
+  const nama=$('fNama').value.trim()||'-';
+  for(const f of files){ try{ S.photos[photoKind].push({name:f.name, data: await compress(f, photoKind, nama)}); }catch(err){ toast('Gagal memproses foto',true); } }
+  drawPhotos();
+};
+function compress(file, kind, nama){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onerror=rej;
+    r.onload=()=>{ const im=new Image(); im.onerror=rej; im.onload=()=>{
+      let w=im.width,h=im.height; const sc=Math.min(1,MAX_PX/Math.max(w,h)); w=Math.round(w*sc); h=Math.round(h*sc);
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const cx=cv.getContext('2d'); cx.drawImage(im,0,0,w,h);
+      const now=new Date(); const ts=now.toLocaleDateString('id-ID')+' '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+      const txt=`Coolmax AC • ${ts} • ${nama} • ${kind.toUpperCase()}`;
+      const fs=Math.max(12,Math.round(w/45)); cx.font=`600 ${fs}px sans-serif`;
+      cx.fillStyle='rgba(0,0,0,.55)'; cx.fillRect(0,h-fs*1.9,w,fs*1.9);
+      cx.fillStyle='#fff'; cx.textBaseline='middle'; cx.fillText(txt,fs*.6,h-fs*.95);
+      res(cv.toDataURL('image/jpeg',QUALITY)); };
+      im.src=r.result; };
+    r.readAsDataURL(file);
+  });
+}
+function openLb(src){ $('lbImg').src=src; $('lb').classList.remove('hide'); }
+$('lb').onclick=()=>$('lb').classList.add('hide');
+
+/* ====== SPAREPART ====== */
+function drawParts(){
+  $('parts').innerHTML = S.parts.map((p,i)=>`<div class="prow"><input placeholder="Nama (mis. kapasitor 35µF)" value="${esc(p.nama)}" data-p="${i}" data-f="nama"><input placeholder="Qty" inputmode="numeric" value="${p.qty}" data-p="${i}" data-f="qty"><input placeholder="Harga" inputmode="numeric" value="${p.harga}" data-p="${i}" data-f="harga"><button type="button" class="btn bad sm" data-rp="${i}">×</button></div>`).join('');
+  calcTotal();
+}
+$('addPart').onclick=()=>{ S.parts.push({nama:'',qty:1,harga:0}); drawParts(); };
+$('parts').addEventListener('input',e=>{ const t=e.target; if(t.dataset.p===undefined) return; S.parts[+t.dataset.p][t.dataset.f]=t.value; calcTotal(); });
+$('parts').addEventListener('click',e=>{ const b=e.target.closest('[data-rp]'); if(b){ S.parts.splice(+b.dataset.rp,1); drawParts(); } });
+$('fJasa').addEventListener('input',calcTotal);
+function calcTotal(){ let t=Number($('fJasa').value)||0; S.parts.forEach(p=>t+=(Number(p.qty)||0)*(Number(p.harga)||0)); $('fTotal').value=rp(t); }
+
+/* ====== SUBMIT ====== */
+$('frm').onsubmit = async e=>{
+  e.preventDefault();
+  const status=$('fStatus').value;
+  if(status==='Selesai' && (!S.photos.sebelum.length || !S.photos.sesudah.length)) return toast('Foto SEBELUM dan SESUDAH wajib untuk status Selesai',true);
+  const c=curCust(); const unitId=$('fUnit').value;
+  const payload={
+    customer:{id:c?c.ID:'', nama:$('fNama').value.trim(), hp:$('fHp').value.trim(), alamat:$('fAlamat').value.trim()},
+    unit: unitId ? {id:unitId, merek:(S.units.find(u=>u.ID===unitId)||{}).Merek, pk:(S.units.find(u=>u.ID===unitId)||{}).PK, lokasi:(S.units.find(u=>u.ID===unitId)||{}).Lokasi}
+                 : {id:'', merek:$('uMerek').value.trim(), pk:$('uPk').value.trim(), lokasi:$('uLok').value.trim(), freon:$('uFreon').value.trim()},
+    tanggal:$('fTgl').value, jenis:$('fJenis').value, keluhan:$('fKeluhan').value.trim(), tindakan:$('fTindakan').value.trim(),
+    status, jadwalBerikutnya:$('fNext').value, sparepart:S.parts, biayaJasa:$('fJasa').value, catatan:$('fCatatan').value.trim(), photos:S.photos
+  };
+  const btn=$('btnSave'); btn.disabled=true; btn.textContent='Mengunggah foto & data… jangan tutup halaman';
+  try{
+    const j=await api('saveReport',payload);
+    toast('Laporan tersimpan: '+j.id);
+    resetForm(); await refresh();
+  }catch(err){ toast(err.message+' — data di form masih aman, coba kirim lagi.',true); }
+  btn.disabled=false; btn.textContent='Kirim Laporan';
+};
+function resetForm(){
+  $('frm').reset(); S.photos={sebelum:[],proses:[],sesudah:[]}; S.parts=[]; $('fTgl').value=today(); $('fJasa').value=0;
+  $('custInfo').textContent=''; drawPhotos(); drawParts(); renderUnits();
+}
+
+/* ====== RIWAYAT ====== */
+['qSearch','qMonth','qStatus','qTek'].forEach(i=>$(i).addEventListener('input',renderRiwayat));
+function filtered(){
+  const q=$('qSearch').value.toLowerCase(), m=$('qMonth').value, s=$('qStatus').value, t=$('qTek').value;
+  return S.reports.filter(r=>(!q||(r.ID+r.Pelanggan+r.Unit+r.Jenis).toLowerCase().includes(q))&&(!m||r.Tanggal.startsWith(m))&&(!s||r.Status===s)&&(!t||r.Teknisi===t));
+}
+function renderRiwayat(){
+  const admin=S.user&&S.user.role==='admin';
+  $('qTekWrap').classList.toggle('hide',!admin);
+  if(admin && !$('qTek').options.length){ const names=[...new Set(S.reports.map(r=>r.Teknisi))]; $('qTek').innerHTML='<option value="">Semua teknisi</option>'+names.map(n=>`<option>${esc(n)}</option>`).join(''); }
+  const rs=filtered();
+  const done=rs.filter(r=>r.Status==='Selesai'), rev=done.reduce((a,r)=>a+Number(r.Total||0),0);
+  $('stats').innerHTML=`<div class="stat"><span>Jumlah laporan</span><b>${rs.length}</b></div><div class="stat"><span>Selesai</span><b>${done.length}</b></div><div class="stat"><span>Perlu tindak lanjut</span><b>${rs.filter(r=>r.Status!=='Selesai').length}</b></div><div class="stat"><span>Pendapatan (selesai)</span><b>${rp(rev)}</b></div>`;
+  $('list').innerHTML = rs.map(r=>`<div class="item" data-r="${r.ID}"><div><b>${esc(r.Pelanggan)}</b><small>${esc(r.ID)} · ${esc(r.Tanggal)} · ${esc(r.Jenis)}</small><small>${esc(r.Unit)}${admin?' · '+esc(r.Teknisi):''}</small></div><div style="text-align:right"><span class="tag ${tagCls(r.Status)}">${esc(r.Status)}</span><small>${rp(r.Total)}</small></div></div>`).join('') || '<p style="color:var(--mut)">Belum ada laporan.</p>';
+}
+$('list').onclick=e=>{ const it=e.target.closest('[data-r]'); if(it) openReport(it.dataset.r); };
+
+function gal(title, ids){ return ids.length?`<div class="gal"><h4>${title}</h4><div class="photos">${ids.map(id=>`<div class="ph"><img src="${thumb(id)}" data-full="${id}" loading="lazy"></div>`).join('')}</div></div>`:''; }
+function openReport(id){
+  const r=S.reports.find(x=>x.ID===id); if(!r) return; const admin=S.user.role==='admin';
+  const sp=r.Sparepart.map(p=>`<tr><td>${esc(p.nama)}</td><td>${esc(p.qty)}</td><td>${rp(p.harga)}</td><td>${rp((p.qty||0)*(p.harga||0))}</td></tr>`).join('');
+  $('modalBox').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:start"><div><h2 style="margin:0">${esc(r.Pelanggan)}</h2><small style="color:var(--mut)">${esc(r.ID)} · ${esc(r.Tanggal)}</small></div><button class="btn sec sm" id="mClose">Tutup</button></div>
+  <dl class="kv" style="margin-top:12px"><dt>Status</dt><dd><span class="tag ${tagCls(r.Status)}">${esc(r.Status)}</span></dd><dt>HP</dt><dd>${esc(r.HP)}</dd><dt>Alamat</dt><dd>${esc(r.Alamat)}</dd><dt>Unit AC</dt><dd>${esc(r.Unit)}</dd><dt>Jenis</dt><dd>${esc(r.Jenis)}</dd><dt>Keluhan</dt><dd>${esc(r.Keluhan)||'-'}</dd><dt>Tindakan</dt><dd>${esc(r.Tindakan)||'-'}</dd><dt>Teknisi</dt><dd>${esc(r.Teknisi)}</dd><dt>Servis berikutnya</dt><dd>${esc(r.JadwalBerikutnya)||'-'}</dd><dt>Catatan</dt><dd>${esc(r.Catatan)||'-'}</dd></dl>
+  ${sp?`<table style="margin-top:10px"><tr><th>Sparepart</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr>${sp}</table>`:''}
+  <p>Jasa ${rp(r.BiayaJasa)} · Sparepart ${rp(r.BiayaSparepart)} · <b>Total ${rp(r.Total)}</b></p>
+  ${gal('Foto sebelum',r.FotoSebelum)}${gal('Foto proses',r.FotoProses)}${gal('Foto sesudah',r.FotoSesudah)}
+  <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+   <select id="mStatus"><option>Selesai</option><option>Dalam Proses</option><option>Perlu Tindak Lanjut</option></select>
+   <button class="btn sm" id="mSet">Ubah status</button><button class="btn sec sm" id="mPrint">Cetak / PDF</button>
+   ${r.HP?`<a class="btn wa sm" style="text-decoration:none" target="_blank" href="${waLink(r.HP,`Yth. ${r.Pelanggan}, terima kasih telah menggunakan Coolmax AC Service. Laporan ${r.ID} (${r.Jenis}) status: ${r.Status}. Total: ${rp(r.Total)}.`)}">Kirim WA</a>`:''}
+   ${admin?'<button class="btn bad sm" id="mDel">Hapus</button>':''}</div>`;
+  $('mStatus').value=r.Status; $('modal').classList.remove('hide');
+  $('mClose').onclick=()=>$('modal').classList.add('hide');
+  $('mSet').onclick=async()=>{ try{ await api('setStatus',{id:r.ID,status:$('mStatus').value}); toast('Status diubah'); $('modal').classList.add('hide'); await refresh(); }catch(e){ toast(e.message,true); } };
+  $('mPrint').onclick=()=>printReport(r);
+  if(admin) $('mDel').onclick=async()=>{ if(!confirm('Hapus laporan '+r.ID+' beserta fotonya?')) return; try{ await api('deleteReport',{id:r.ID}); toast('Dihapus'); $('modal').classList.add('hide'); await refresh(); }catch(e){ toast(e.message,true); } };
+}
+$('modalBox').addEventListener('click',e=>{ const im=e.target.closest('img[data-full]'); if(im) openLb(thumb(im.dataset.full,1600)); });
+$('modal').addEventListener('click',e=>{ if(e.target===$('modal')) $('modal').classList.add('hide'); });
+
+function printReport(r){
+  const ph=(t,ids)=>ids.length?`<h3>${t}</h3>${ids.map(i=>`<img src="${thumb(i,800)}">`).join('')}`:'';
+  $('printArea').innerHTML=`<h2>Coolmax AC Service — Laporan Perbaikan AC</h2><p><b>${esc(r.ID)}</b> · ${esc(r.Tanggal)} · Teknisi: ${esc(r.Teknisi)}</p>
+  <table><tr><td>Pelanggan</td><td>${esc(r.Pelanggan)} (${esc(r.HP)})</td></tr><tr><td>Alamat</td><td>${esc(r.Alamat)}</td></tr><tr><td>Unit</td><td>${esc(r.Unit)}</td></tr><tr><td>Jenis</td><td>${esc(r.Jenis)}</td></tr><tr><td>Keluhan</td><td>${esc(r.Keluhan)}</td></tr><tr><td>Tindakan</td><td>${esc(r.Tindakan)}</td></tr><tr><td>Status</td><td>${esc(r.Status)}</td></tr><tr><td>Biaya</td><td>Jasa ${rp(r.BiayaJasa)} + Sparepart ${rp(r.BiayaSparepart)} = <b>${rp(r.Total)}</b></td></tr></table>
+  ${ph('Foto sebelum',r.FotoSebelum)}${ph('Foto proses',r.FotoProses)}${ph('Foto sesudah',r.FotoSesudah)}`;
+  setTimeout(()=>window.print(),700);
+}
+function waLink(hp,text){ let n=String(hp).replace(/\D/g,''); if(n.startsWith('0')) n='62'+n.slice(1); return 'https://wa.me/'+n+'?text='+encodeURIComponent(text); }
+
+/* ====== JADWAL SERVIS ====== */
+function renderJadwal(){
+  const latest={};
+  S.reports.filter(r=>r.JadwalBerikutnya).forEach(r=>{ if(!latest[r.UnitID]||r.Tanggal>latest[r.UnitID].Tanggal) latest[r.UnitID]=r; });
+  const t0=new Date(today());
+  const arr=Object.values(latest).map(r=>({r,d:Math.round((new Date(r.JadwalBerikutnya)-t0)/864e5)})).sort((a,b)=>a.d-b.d);
+  $('jadwalList').innerHTML=arr.map(({r,d})=>{
+    const st=d<0?`<span class="tag t-Lanjut">Terlambat ${-d} hari</span>`:d<=14?`<span class="tag t-Proses">${d} hari lagi</span>`:`<span class="tag t-Selesai">${d} hari lagi</span>`;
+    return `<div class="item" style="cursor:default"><div><b>${esc(r.Pelanggan)}</b><small>${esc(r.Unit)} · jadwal ${esc(r.JadwalBerikutnya)}</small></div><div style="text-align:right">${st}<br>${r.HP?`<a class="btn wa sm" style="text-decoration:none;display:inline-block;margin-top:4px" target="_blank" href="${waLink(r.HP,`Yth. ${r.Pelanggan}, AC ${r.Unit} Anda dijadwalkan servis pada ${r.JadwalBerikutnya}. Hubungi Coolmax AC Service untuk konfirmasi jadwal.`)}">Ingatkan via WA</a>`:''}</div></div>`; }).join('')||'<p style="color:var(--mut)">Belum ada jadwal servis berikutnya.</p>';
+}
+
+/* ====== PELANGGAN & UNIT ====== */
+$('cSearch').addEventListener('input',renderCust);
+function renderCust(){
+  const q=$('cSearch').value.toLowerCase();
+  $('custList').innerHTML=S.customers.filter(c=>!q||(c.Nama+c.HP+c.Alamat).toLowerCase().includes(q)).map(c=>{
+    const us=S.units.filter(u=>u.PelangganID===c.ID);
+    return `<div class="card" style="margin:0 0 8px"><b>${esc(c.Nama)}</b> <small style="color:var(--mut)">${esc(c.ID)} · ${esc(c.HP)}</small><br><small>${esc(c.Alamat)}</small>`+
+      us.map(u=>{ const hs=S.reports.filter(r=>r.UnitID===u.ID);
+        return `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--bd)">❄ ${esc(u.Merek)} ${esc(u.PK)}PK – ${esc(u.Lokasi)} ${u.Freon?'· '+esc(u.Freon):''}<br>`+
+          (hs.length?hs.map(r=>`<small><a href="#" data-r="${r.ID}" class="hl">${esc(r.Tanggal)} ${esc(r.Jenis)}</a> (${esc(r.Status)})</small>`).join('<br>'):'<small style="color:var(--mut)">Belum ada riwayat</small>')+`</div>`; }).join('')+`</div>`; }).join('')||'<p style="color:var(--mut)">Belum ada pelanggan.</p>';
+}
+$('custList').onclick=e=>{ const a=e.target.closest('a.hl'); if(a){ e.preventDefault(); openReport(a.dataset.r); } };
+
+/* ====== TEKNISI (ADMIN) ====== */
+function renderTeknisi(){
+  if(S.user.role!=='admin') return;
+  $('tTable').innerHTML='<tr><th>Nama</th><th>Role</th><th>Aktif</th><th></th></tr>'+S.teknisi.map(t=>`<tr><td>${esc(t.Nama)}</td><td>${esc(t.Role)}</td><td>${esc(t.Aktif)}</td><td><button class="btn sec sm" data-tg="${esc(t.Nama)}" data-a="${t.Aktif==='ya'?'tidak':'ya'}">${t.Aktif==='ya'?'Nonaktifkan':'Aktifkan'}</button></td></tr>`).join('');
+}
+$('tTable').onclick=async e=>{ const b=e.target.closest('[data-tg]'); if(!b) return; try{ await api('saveTeknisi',{nama:b.dataset.tg,aktif:b.dataset.a}); await refresh(); }catch(err){ toast(err.message,true); } };
+$('tSave').onclick=async()=>{ try{ await api('saveTeknisi',{nama:$('tNama').value,pin:$('tPin').value,role:$('tRole').value}); toast('Tersimpan'); $('tNama').value=''; $('tPin').value=''; await refresh(); }catch(e){ toast(e.message,true); } };
+
+/* ====== INIT ====== */
+$('fTgl').value=today(); drawPhotos(); drawParts();
+if(API_URL==='API_URL') $('cfgWarn').classList.remove('hide');
+try{ const a=JSON.parse(store.get('cmx_auth')||'null'); if(a&&a.nama){ $('lgNama').value=a.nama; doLogin(a.nama,a.pin,true); } }catch(e){}
+</script>
+</body>
+</html>
