@@ -31,7 +31,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-colo
 .ph{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#e2e8f0}
 .ph img{width:100%;height:100%;object-fit:cover;cursor:pointer}
 .ph b{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border-radius:50%;width:22px;height:22px;text-align:center;line-height:22px;cursor:pointer;font-weight:400}
-.addph{display:flex;align-items:center;justify-content:center;flex-direction:column;border:2px dashed #94a3b8;color:var(--mut);cursor:pointer;font-size:12px;aspect-ratio:1;border-radius:8px}
+.addph{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;border:2px dashed #94a3b8;color:var(--mut);cursor:pointer;font-size:11px;aspect-ratio:1;border-radius:8px;padding:4px;text-align:center}
+.addph .aB{display:flex;gap:4px;width:100%}
+.addph .aB span{flex:1;background:#fff;border:1px solid #cbd5e1;border-radius:6px;padding:4px 2px;font-size:18px;cursor:pointer}
 .tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:600}
 .t-Selesai{background:#dcfce7;color:#166534}.t-Proses{background:#fef3c7;color:#92400e}.t-Lanjut{background:#fee2e2;color:#991b1b}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
@@ -116,7 +118,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:8px;borde
     <label>Sebelum pekerjaan *</label><div class="photos" id="ph-sebelum"></div>
     <label>Proses pekerjaan</label><div class="photos" id="ph-proses"></div>
     <label>Sesudah pekerjaan *</label><div class="photos" id="ph-sesudah"></div>
-    <input type="file" id="fileIn" accept="image/*" multiple class="hide">
+    <input type="file" id="fileInCam" accept="image/*" capture="environment" class="hide">
+    <input type="file" id="fileInGal" accept="image/*" multiple class="hide">
   </div>
 
   <div class="card"><h2>5. Biaya &amp; Sparepart</h2>
@@ -239,20 +242,22 @@ let photoKind=null;
 function drawPhotos(){
   ['sebelum','proses','sesudah'].forEach(k=>{
     $('ph-'+k).innerHTML = S.photos[k].map((p,i)=>`<div class="ph"><img src="${p.data}" data-k="${k}" data-i="${i}"><b data-k="${k}" data-i="${i}">×</b></div>`).join('')
-      + `<div class="addph" data-add="${k}"><span style="font-size:26px">📷</span>Tambah</div>`;
+      + `<div class="addph"><div class="aB"><span data-cam="${k}" title="Ambil foto (kamera)">📷</span><span data-gal="${k}" title="Pilih dari galeri">🖼️</span></div>Kamera / Galeri</div>`;
   });
 }
 document.addEventListener('click', e=>{
-  const add=e.target.closest('[data-add]'); if(add){ photoKind=add.dataset.add; $('fileIn').click(); return; }
+  const cam=e.target.closest('[data-cam]'); if(cam){ photoKind=cam.dataset.cam; $('fileInCam').click(); return; }
+  const gal=e.target.closest('[data-gal]'); if(gal){ photoKind=gal.dataset.gal; $('fileInGal').click(); return; }
   const del=e.target.closest('.ph b'); if(del){ S.photos[del.dataset.k].splice(+del.dataset.i,1); drawPhotos(); return; }
   const img=e.target.closest('.ph img'); if(img){ openLb(img.src); }
 });
-$('fileIn').onchange = async e=>{
-  const files=[...e.target.files]; e.target.value='';
+async function handleFiles(files){
   const nama=$('fNama').value.trim()||'-';
   for(const f of files){ try{ S.photos[photoKind].push({name:f.name, data: await compress(f, photoKind, nama)}); }catch(err){ toast('Gagal memproses foto',true); } }
   drawPhotos();
-};
+}
+$('fileInCam').onchange = e=>{ const files=[...e.target.files]; e.target.value=''; handleFiles(files); };
+$('fileInGal').onchange = e=>{ const files=[...e.target.files]; e.target.value=''; handleFiles(files); };
 function compress(file, kind, nama){
   return new Promise((res,rej)=>{
     const r=new FileReader();
